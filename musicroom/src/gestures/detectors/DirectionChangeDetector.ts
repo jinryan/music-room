@@ -1,81 +1,73 @@
-import { CONFIG } from '../../app/config'
-import type { FeatureFrame } from '../../features/types'
-import type { GestureEvent, GestureDetector } from '../types'
+import { CONFIG } from "../../app/config";
+import type { FeatureFrame } from "../../features/types";
+import type { GestureDetector, GestureEvent, KinematicFeature } from "../types";
 
-type Vec2 = { x: number; y: number }
+type DirectionChangeDetectorOptions = {
+  axis: "x" | "y";
+  sourceLabel: string;
+  selectFeature: (frame: FeatureFrame) => KinematicFeature | null;
+};
 
 export class DirectionChangeDetector implements GestureDetector {
-  private lastVelocity: Vec2 | null = null
-  private lastTriggerTime = 0
-  private counter = 0
-  private lastLogTime = 0
+  private options: DirectionChangeDetectorOptions;
+  private lastAxisValue: number | null = null;
+  private lastTriggerTime: number = 0;
+  private counter: number = 0;
 
-  update(frame: FeatureFrame): GestureEvent[] {
-    const { velocity, speed, confidence } = frame.features.hand
-    const events: GestureEvent[] = []
-
-    if (speed < CONFIG.detectors.direction.minSpeed) {
-      return events
-    }
-
-    if (this.lastVelocity) {
-      const minAxisSpeed = CONFIG.detectors.direction.minAxisSpeed
-      const changedXDirection =
-        Math.abs(this.lastVelocity.x) > minAxisSpeed &&
-        Math.abs(velocity.x) > minAxisSpeed &&
-        this.lastVelocity.x * velocity.x < 0
-      const cooldownReady =
-        frame.timestamp - this.lastTriggerTime >=
-        CONFIG.detectors.direction.cooldownMs
-
-      if (
-        CONFIG.debug.log.directionCheck &&
-        frame.timestamp - this.lastLogTime >= 250
-      ) {
-        this.lastLogTime = frame.timestamp
-        console.info('[direction-check-x]', {
-          speed: speed.toFixed(2),
-          lastX: this.lastVelocity.x.toFixed(3),
-          currentX: velocity.x.toFixed(3),
-          changedXDirection,
-          cooldownReady,
-        })
-      }
-
-      if (cooldownReady && changedXDirection) {
-        if (CONFIG.debug.log.gestures) {
-          console.info('[direction-change-x]', {
-            speed: speed.toFixed(2),
-            lastX: this.lastVelocity.x.toFixed(3),
-            currentX: velocity.x.toFixed(3),
-          })
-        }
-        this.lastTriggerTime = frame.timestamp
-        events.push({
-          id: this.nextId('DIRECTION_CHANGE_X'),
-          type: 'DIRECTION_CHANGE_X',
-          timestamp: frame.timestamp,
-          confidence,
-          sourceFeatures: ['hand.velocity'],
-          data: {
-            speed,
-            lastX: this.lastVelocity.x,
-            currentX: velocity.x,
-          },
-        })
-      }
-    }
-
-    const minAxisSpeed = CONFIG.detectors.direction.minAxisSpeed
-    if (Math.abs(velocity.x) > minAxisSpeed) {
-      this.lastVelocity = { x: velocity.x, y: velocity.y }
-    }
-
-    return events
+  constructor(options: DirectionChangeDetectorOptions) {
+    this.options = options;
   }
 
-  private nextId(type: GestureEvent['type']) {
-    this.counter += 1
-    return `${type}-${this.counter}`
+  update(frame: FeatureFrame): GestureEvent[] {
+    const feature = this.options.selectFeature(frame);
+    const events: GestureEvent[] = [];
+
+    if (!feature) {
+      return events;
+    }
+
+    const { velocity, speed, confidence } = feature;
+    const axis = this.options.axis;
+    const axisValue = velocity[axis];
+    const eventType =
+      axis === "x" ? "DIRECTION_CHANGE_X" : "DIRECTION_CHANGE_Y";
+
+    // Noise filtering
+    if (Math.abs(velocity[axis]) < CONFIG.detectors.direction.minAxisSpeed) {
+      return events;
+    }
+
+    if (this.lastAxisValue) {
+      const changedDirection = this.lastAxisValue * axisValue < 0;
+      const cooldownReady =
+        frame.timestamp - this.lastTriggerTime >=
+        CONFIG.detectors.direction.cooldownMs;
+
+      if (cooldownReady && changedDirection) {
+        this.lastTriggerTime = frame.timestamp;
+        events.push({
+          id: this.nextId(eventType),
+          type: eventType,
+          timestamp: frame.timestamp,
+          confidence,
+          sourceFeatures: [this.options.sourceLabel],
+          data: {
+            speed,
+            axis,
+            lastValue: this.lastAxisValue,
+            currentValue: axisValue,
+          },
+        });
+      }
+    }
+
+    this.lastAxisValue = axisValue;
+
+    return events;
+  }
+
+  private nextId(type: GestureEvent["type"]) {
+    this.counter += 1;
+    return `${type}-${this.counter}`;
   }
 }

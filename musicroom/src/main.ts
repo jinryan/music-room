@@ -1,9 +1,9 @@
-import './style.css'
-import { bootApp } from './app/main'
+import "./style.css";
+import { bootApp } from "./app/main";
 
-const app = document.querySelector<HTMLDivElement>('#app')
+const app = document.querySelector<HTMLDivElement>("#app");
 if (!app) {
-  throw new Error('Missing #app root element')
+  throw new Error("Missing #app root element");
 }
 
 app.innerHTML = `
@@ -11,8 +11,8 @@ app.innerHTML = `
     <h1>Room Instrument V1</h1>
     <p class="status">Booting…</p>
   </div>
-`
+`;
 
 bootApp().catch((error) => {
-  console.error('Failed to boot app', error)
-})
+  console.error("Failed to boot app", error);
+});

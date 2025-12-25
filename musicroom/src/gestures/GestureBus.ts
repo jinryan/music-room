@@ -1,17 +1,17 @@
-import type { GestureEvent } from './types'
+import type { GestureEvent } from "./types";
 
 export class GestureBus {
-  private lastEvent: GestureEvent | null = null
+  private lastEvent: GestureEvent | null = null;
 
   publish(events: GestureEvent[]) {
     if (events.length === 0) {
-      return
+      return;
     }
 
-    this.lastEvent = events[events.length - 1]
+    this.lastEvent = events[events.length - 1];
   }
 
   getLastEvent() {
-    return this.lastEvent
+    return this.lastEvent;
   }
 }
