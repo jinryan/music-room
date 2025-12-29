@@ -1,3 +1,4 @@
+// ReflexImpulseRendererV1 implements the fast, deterministic mapping from MotionContext (features + events) to render commands.
 import { CONFIG } from "../app/config";
 import type { FeatureFrame } from "../features/types";
 import type { GestureEvent } from "../gestures/types";

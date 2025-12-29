@@ -1,3 +1,4 @@
+// FeatureExtractor consumes SensorFrame data and emits smoothed hand kinematic features for downstream motion/gesture analysis.
 import { CONFIG } from "../app/config";
 import type { Hand2D, SensorFrame } from "../sensing/types";
 import type { FeatureFrame } from "./types";

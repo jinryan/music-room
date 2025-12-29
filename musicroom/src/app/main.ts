@@ -8,7 +8,7 @@ import { createGesturePipeline } from "../gestures/gesturePipeline";
 import { IntentInterpreter } from "../intent/IntentInterpreter";
 import { ReflexImpulseRendererV1 } from "../reflex/ReflexImpulseRendererV1";
 import { MonoSynthEngine } from "../engine/MonoSynthEngine";
-import type { BiasControls } from "../intent/types";
+import type { BiasState } from "../intent/types";
 import type { RenderEvent } from "../render/types";
 import { SensorHub } from "../sensing/SensorHub";
 
@@ -183,15 +183,17 @@ function updateNoteState(current: boolean | null, events: RenderEvent[]) {
 }
 
 function mergeControls(
-  biasControls: BiasControls,
+  biasControls: BiasState,
   renderControls: Record<string, number>,
 ) {
   const controls: Record<string, number> = { ...renderControls };
-  for (const key in biasControls) {
-    const value = biasControls[key as keyof BiasControls];
-    if (value !== undefined) {
-      controls[key] = value;
-    }
-  }
+  (["textureDensity", "tonalStability", "variation"] as const).forEach(
+    (key) => {
+      const value = biasControls[key];
+      if (value !== undefined) {
+        controls[key] = value;
+      }
+    },
+  );
   return controls;
 }

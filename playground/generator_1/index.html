@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Autonomous Musical Engine</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <div class="container">
+        <h1>Autonomous Musical Engine</h1>
+        <p class="description">A generative music system creating hypnotic loops</p>
+        <div class="controls">
+          <button id="startBtn" class="btn btn-primary">Start</button>
+          <button id="stopBtn" class="btn btn-secondary" disabled>Stop</button>
+        </div>
+        <div class="layers">
+          <h3>Layers</h3>
+          <label class="layer-toggle">
+            <input type="checkbox" id="bassToggle" checked>
+            <span>Bass</span>
+          </label>
+          <label class="layer-toggle">
+            <input type="checkbox" id="drumToggle" checked>
+            <span>Drums</span>
+          </label>
+          <label class="layer-toggle">
+            <input type="checkbox" id="padToggle" checked>
+            <span>Pads</span>
+          </label>
+          <label class="layer-toggle">
+            <input type="checkbox" id="melodyToggle" checked>
+            <span>Melody</span>
+          </label>
+        </div>
+        <div class="status" id="status">Ready</div>
+      </div>
+    </div>
+          <script type="module" src="src/main.ts"></script>
+  </body>
+</html>
+

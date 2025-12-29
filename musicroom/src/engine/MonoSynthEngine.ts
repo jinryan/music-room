@@ -1,3 +1,4 @@
+// MonoSynthEngine is a minimal audio engine that consumes render commands and renders a single voice with smooth parameter ramps.
 import { CONFIG } from "../app/config";
 import type { RenderPacket, RenderEvent } from "../render/types";
 import type { AudioEngine } from "./AudioEngine";
