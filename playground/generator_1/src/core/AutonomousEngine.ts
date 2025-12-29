@@ -104,7 +104,7 @@ export class AutonomousEngine {
         this.chordManager.advance();
 
         // Re-schedule layers periodically to keep playing
-        if (this.barCounter % 8 === 0) {
+        if (this.barCounter % 32 === 0) {
           const currentTime = this.context.currentTime;
           const nextLoopStart = currentTime + 0.1;
           if (this.bassEnabled && this.bassLayer) {

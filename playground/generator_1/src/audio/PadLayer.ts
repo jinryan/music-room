@@ -76,7 +76,7 @@ export class PadLayer extends BaseAudioLayer {
       let frequency = noteToFrequency(note);
       
       // If frequency is below 200Hz, transpose up one octave
-      if (frequency < 180) {
+      if (frequency < 150) {
         const octaveMatch = note.match(/^([A-G]#?)(\d+)$/);
         if (octaveMatch) {
           const [, noteName, octaveStr] = octaveMatch;
