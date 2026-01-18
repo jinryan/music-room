@@ -34,3 +34,4 @@ export function noteToFrequency(note: string): number {
   return 440 * Math.pow(2, (midiNote - 69) / 12);
 }
 
+

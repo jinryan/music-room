@@ -20,3 +20,4 @@ export const CONFIG = {
   totalBeats: 32, // 8 bars * 4 beats
 } as const;
 
+
